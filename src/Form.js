@@ -16,10 +16,18 @@ class Form extends Component {
     e.preventDefault();
     console.log('Submit: ' + this.state.urlInput);
     var self = this;
+
+    // set loading image
+    self.setState({imageURL: "/images/loading.png"});
+
     axios.post('/api',this.state.urlInput).then(function (response) {
+      console.log(response);
       self.setState({imageURL: "/api" + response.data});
-    });
-    //request.send(this.state.urlInput);
+    }).catch(function (error) {
+      // handle error
+      console.log(error);
+      self.setState({imageURL: "/images/sorry.png"});
+    })
   }
 
   onChange(name, value) {

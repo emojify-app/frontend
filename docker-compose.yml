@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  authn:
+    image: keratin/authn-server:latest
+    ports:
+      - "8090:3000"
+    environment:
+      - DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared 
+      - AUTHN_URL=http://localhost:8090
+      - APP_DOMAINS=localhost
+      - SECRET_KEY_BASE=changeme
+    entrypoint: "sh"
+    command: ["-c","./authn migrate && ./authn server"]

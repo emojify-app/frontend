@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Grid from 'react-bootstrap/lib/Grid'
 import Row from 'react-bootstrap/lib/Row'
 import Col from 'react-bootstrap/lib/Col'
+import Image from './Image';
 
 class Home extends Component {
   render() {
@@ -12,7 +13,7 @@ class Home extends Component {
       <Grid>
         <Row>
           <Col xs={12}>
-            <img className="u-max-full-width" alt="emojify" src="/images/emojify.png" />
+            <Image src="/images/emojify.png" width={900} height={400} mode='fit'></Image>
           </Col>
         </Row>
       </Grid>

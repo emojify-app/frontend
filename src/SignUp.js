@@ -7,19 +7,20 @@ import * as KeratinAuthN from 'keratin-authn/dist/keratin-authn';
 
 import ErrorMessage from './ErrorMessage';
 import LoginForm from './LoginForm';
+import PasswordStrength from './PasswordStrength';
 import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import Grid from 'react-bootstrap/lib/Grid';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 
-class Login extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
-    this.handleLogin = this.handleLogin.bind(this);
+    this.handleSignUp = this.handleSignUp.bind(this);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleSignUpClick = this.handleSignUpClick.bind(this);
 
     this.state = {
       showError: false,
@@ -27,9 +28,9 @@ class Login extends Component {
     };
   }
 
-  handleLogin(e) {
-    const self = this;
-    KeratinAuthN.login({ username: this.state.username, password: this.state.password })
+  handleSignUp(e) {
+    const self = this
+    KeratinAuthN.signup({ username: this.state.username, password: this.state.password })
       .then(function (val) {
         console.log("signup success");
         self.signUpSuccess();
@@ -39,17 +40,24 @@ class Login extends Component {
       });
   }
 
+  handleLoginClick() {
+    this.setState({ showError: false });
+    this.props.onResult("ShowLogin");
+  }
+
   signUpSuccess() {
     this.setState({ showError: false });
-    this.props.onResult("LoginSuccess");
+    this.props.onResult("SignUpSuccess");
   }
 
   showError(reason) {
-    console.log(reason);
     let errorMessage;
     switch (reason[0].message) {
-      case "FAILED":
-        errorMessage = <div>Incorrect username or password, to sign up please click here: <a onClick={this.handleSignUpClick}>Sign up</a></div>
+      case 'TAKEN':
+        errorMessage = <div>Sorry this username is already taken, click here to <a onClick={this.handleLoginClick}>Log in</a></div>
+        break;
+      case 'INSECURE':
+        errorMessage = "Please use a secure password at least 10 characters in length and containing at least 2 symbols";
         break;
       default:
         errorMessage = "An unexpected error has occurred";
@@ -66,13 +74,11 @@ class Login extends Component {
     this.setState({ password: value });
   }
 
-  handleSignUpClick() {
-    this.props.onResult("ShowSignUp");
-  }
-
   render() {
+    const showError = this.state.showError;
     let error;
-    if (this.state.showError) {
+
+    if (showError) {
       error = <ErrorMessage errorMessage={this.state.errorMessage} />
     }
 
@@ -87,28 +93,21 @@ class Login extends Component {
           <Col xs={3} xsOffset={4}>
             <Panel className="loginPanel">
               <Panel.Heading>
-                <Panel.Title>Login</Panel.Title>
-                Login to Emojify using your email address and password
+                <Panel.Title>Signup</Panel.Title>
               </Panel.Heading>
               <Panel.Body>
                 <form>
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
-                  <Row>
-                    <Col xs={6}>
-                      <Button bsStyle="primary" onClick={this.handleLogin}>Login</Button>
-                    </Col>
-                    <Col xs={6} >
-                      <Button className="pull-right" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
-                    </Col>
-                  </Row>
+                  <PasswordStrength password={this.state.password} />
+                  <Button bsStyle="primary" onClick={this.handleSignUp}>Signup</Button>
                 </form>
               </Panel.Body>
             </Panel>
           </Col>
-        </Row >
-      </Grid >
+        </Row>
+      </Grid>
     );
   }
 }
 
-export default Login;
+export default SignUp;

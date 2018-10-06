@@ -1,14 +1,70 @@
+---
 version: '3'
 services:
 
-  authn:
+  consul:
+    image: consul:latest
+    ports:
+      - "8501:8500"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - SERVICE_IGNORE=true
+
+  consul-registrator:
+    image: gliderlabs/registrator:latest
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: ["consul://consul:8500"]
+    depends_on:
+      - consul
+
+  connect-router:
+    image: nicholasjackson/consul-connect-router:latest
+    ports:
+      - "8181:8181"
+    command: [
+      '--upstream=emojify-website#/',
+      '--upstream=emojify-api#/api',
+      '--upstream=emojify-auth#/auth',
+      '--consul_addr=http://consul:8500'
+    ]
+    depends_on:
+      - consul
+    environment:
+      - SERVICE_NAME=connect-router
+
+  emojify-auth:
     image: keratin/authn-server:latest
     ports:
-      - "8090:3000"
+      - "3000:3000"
     environment:
-      - DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared 
-      - AUTHN_URL=http://localhost:8090
+      - DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared
+      - AUTHN_URL=http://localhost:3000
       - APP_DOMAINS=localhost
       - SECRET_KEY_BASE=changeme
+      - SERVICE_NAME=emojify-auth
+      - SERVICE_3000_CHECK_HTTP=/health
+      - SERVICE_3000_CHECK_INTERVAL=15s
+      - SERVICE_3000_CHECK_TIMEOUTL=1s
     entrypoint: "sh"
-    command: ["-c","./authn migrate && ./authn server"]
+    command: ["-c", "./authn migrate && ./authn server"]
+
+  emojify-auth-proxy:
+    image: consul:latest
+    entrypoint: "consul"
+    command: [
+      'connect',
+      'proxy',
+      '-log-level=DEBUG',
+      '-service', 'emojify-auth',
+      '-http-addr', 'consul:8500',
+      '-listen', 'emojify-auth-proxy:8442',
+      '-service-addr', 'emojify-auth:3000',
+      '-register'
+    ]
+    ports:
+      - "8442:8442"
+    environment:
+      - SERVICE_IGNORE=true
+    depends_on:
+      - consul

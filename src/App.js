@@ -24,7 +24,15 @@ class App extends Component {
 
     this.state = { event: "ShowHome", loginTitle: "Login", loggedIn: false };
 
-    KeratinAuthN.setHost('http://localhost:8181/auth');
+
+    var host = process.env.REACT_APP_HOST
+    if (host === undefined) {
+      host = "http://api.xn--emjify-4v74e.ws"
+    }
+
+    console.log("host:", host);
+
+    KeratinAuthN.setHost(host + '/auth');
     KeratinAuthN.setLocalStorageStore("emojify");
   }
 

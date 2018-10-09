@@ -14,6 +14,12 @@ import Home from './Home.js';
 import Form from './Form.js';
 import LoginButton from './LoginButton.js';
 
+if (process.env.NODE_ENV === "development") {
+  window.env.config = {
+    API_URL: process.env.REACT_APP_HOST
+  };
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -24,20 +30,14 @@ class App extends Component {
 
     this.state = { event: "ShowHome", loginTitle: "Login", loggedIn: false };
 
+    console.log("host:", window.env.config.API_URL);
 
-    var host = process.env.REACT_APP_HOST
-    if (host === undefined) {
-      host = "http://api.xn--emjify-4v74e.ws"
-    }
-
-    console.log("host:", host);
-
-    KeratinAuthN.setHost(host + '/auth');
+    KeratinAuthN.setHost(window.env.config.API_URL + '/auth');
     KeratinAuthN.setLocalStorageStore("emojify");
   }
 
   componentDidMount() {
-    const self = this
+    const self = this;
     KeratinAuthN.restoreSession().then(() => {
       console.log("restoring session");
       self.setState({ event: "ShowForm", loginTitle: "Logout", loggedIn: true });

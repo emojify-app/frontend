@@ -27,21 +27,16 @@ class Form extends Component {
 
     // set loading image
     self.setState({ imageURL: "/images/loading.png" });
-    let headers = { Authorization: "jwt " + KeratinAuthN.session() }
+    let headers = { Authorization: "jwt " + KeratinAuthN.session() };
 
-    var host = process.env.REACT_APP_HOST
-    if (host === undefined) {
-      host = "http://api.xn--emjify-4v74e.ws"
-    }
-
-    axios.post(host + '/api', this.state.urlInput, { headers: headers }).then(function (response) {
+    axios.post(window.env.config.API_URL + '/api', this.state.urlInput, { headers: headers }).then(function (response) {
       console.log(response);
-      self.setState({ imageURL: host + '/api/cache?file=' + response.data });
+      self.setState({ imageURL: window.env.config.API_URL + '/api/cache?file=' + response.data });
     }).catch(function (error) {
       // handle error
       console.log(error);
       self.setState({ imageURL: "/images/sorry.png" });
-    })
+    });
   }
 
   handleChange(e) {
@@ -54,7 +49,7 @@ class Form extends Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <Image src="/images/emojify.png" width={900} height={400} mode='fit'></Image>
+              <Image src="/images/emojify.png" width={900} height={400} mode='fit'/>
             </Col>
           </Row>
           <Row>

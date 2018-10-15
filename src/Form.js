@@ -29,9 +29,9 @@ class Form extends Component {
     self.setState({ imageURL: "/images/loading.png" });
     let headers = { Authorization: "jwt " + KeratinAuthN.session() };
 
-    axios.post(window.env.config.API_URL + '/api', this.state.urlInput, { headers: headers }).then(function (response) {
+    axios.post(window.env.config.API_URL, this.state.urlInput, { headers: headers }).then(function (response) {
       console.log(response);
-      self.setState({ imageURL: window.env.config.API_URL + '/api/cache?file=' + response.data });
+      self.setState({ imageURL: window.env.config.API_URL + '/cache?file=' + response.data });
     }).catch(function (error) {
       // handle error
       console.log(error);

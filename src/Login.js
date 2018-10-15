@@ -79,12 +79,12 @@ class Login extends Component {
     return (
       <Grid>
         <Row>
-          <Col xs={12}>
+          <Col md={12}>
             {error}
           </Col>
         </Row>
         <Row>
-          <Col xs={3} xsOffset={4}>
+          <Col md={6} mdOffset={4}>
             <Panel className="loginPanel">
               <Panel.Heading>
                 <Panel.Title>Login</Panel.Title>
@@ -94,11 +94,19 @@ class Login extends Component {
                 <form>
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
                   <Row>
-                    <Col xs={6}>
+                    <Col md={2}>
                       <Button bsStyle="primary" onClick={this.handleLogin}>Login</Button>
                     </Col>
-                    <Col xs={6} >
+                    <Col md={2}>
                       <Button className="pull-right" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={12}>&nbsp;</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6} >
+                      <Button href="{this.props.oAuthURI}" block bsStyle="danger">Login with Github</Button>
                     </Col>
                   </Row>
                 </form>

@@ -18,45 +18,32 @@ services:
     depends_on:
       - consul
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx-config/default.conf:/etc/nginx/nginx.conf:ro
+  connect-router:
+    image: nicholasjackson/consul-connect-router:latest
     ports:
-      - "8181:80"
-    depends_on:
-      - consul
-
-  nginx-proxy:
-    image: consul:latest
-    network_mode: "service:nginx"
-    entrypoint: "consul"
+      - "8181:8181"
     command: [
-      'connect',
-      'proxy',
-      '-log-level=DEBUG',
-      '-service', 'nginx',
-      '-http-addr', 'consul:8500',
-      '-upstream', 'emojify-website:8000',
-      '-upstream', 'emojify-auth:8001',
-      '-upstream', 'emojify-api:8002'
+      '--upstream=service=emojify-website#path=/',
+      '--upstream=service=emojify-api#path=/api',
+      '--upstream=service=emojify-auth#path=/auth',
+      '--consul_addr=http://consul:8500'
     ]
-    environment:
-      - SERVICE_IGNORE=true
     depends_on:
       - consul
+    environment:
+      - SERVICE_NAME=connect-router
 
   emojify-website:
-    image: nicholasjackson/emojify-website:latest
+    image: nicholasjackson/emojify-website:dev
     ports:
-      - "5000:5000"
+      - "3006:3006"
     environment:
       - SERVICE_NAME=emojify-website
-      - SERVICE_5000_CHECK_HTTP=/
-      - SERVICE_5000_CHECK_INTERVAL=15s
-      - SERVICE_5000_CHECK_TIMEOUTL=1s
+      - SERVICE_3006_CHECK_HTTP=/
+      - SERVICE_3006_CHECK_INTERVAL=15s
+      - SERVICE_3006_CHECK_TIMEOUTL=1s
     volumes:
-      - ./docker-compose.env.js:/app/build/config/env.js
+      - .:/frontend
 
   emojify-website-proxy:
     image: consul:latest
@@ -69,7 +56,7 @@ services:
       '-service', 'emojify-website',
       '-http-addr', 'consul:8500',
       '-listen', 'emojify-website:8443',
-      '-service-addr', 'localhost:5000',
+      '-service-addr', 'localhost:3006',
       '-register'
     ]
     environment:
@@ -84,13 +71,14 @@ services:
     environment:
       - DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared
       - AUTHN_URL=http://localhost:3000
-      - APP_DOMAINS=localhost
-      - PROXIED=true
+      - APP_DOMAINS=ngrok.local.demo.gs
       - SECRET_KEY_BASE=changeme
       - SERVICE_NAME=emojify-auth
       - SERVICE_3000_CHECK_HTTP=/health
       - SERVICE_3000_CHECK_INTERVAL=15s
       - SERVICE_3000_CHECK_TIMEOUTL=1s
+      - GITHUB_OAUTH_CREDENTIALS=${GITHUB_AUTH_CLIENT_ID}:${GITHUB_AUTH_CLIENT_SECRET}
+      - PROXIED=true
     entrypoint: "sh"
     command: ["-c", "./authn migrate && ./authn server"]
 

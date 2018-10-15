@@ -28,21 +28,28 @@ class App extends Component {
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleHomeClick = this.handleHomeClick.bind(this);
 
-    this.state = { event: "ShowHome", loginTitle: "Login", loggedIn: false };
+    this.state = {
+      event: "ShowHome",
+      loginTitle: "Login",
+      loggedIn: false,
+      oAuthURI: window.env.config.AUTH_URL + "/oauth/github?redirect_uri=" + window.env.config.HOME_URL
+    };
 
-    console.log("host:", window.env.config.API_URL);
+    console.log("host:", window.env.config.AUTH_URL);
+    console.log("sessions in cookie");
 
-    KeratinAuthN.setHost(window.env.config.API_URL + '/auth');
-    KeratinAuthN.setLocalStorageStore("emojify");
+    KeratinAuthN.setHost(window.env.config.AUTH_URL);
+    KeratinAuthN.setCookieStore("authn");
+    //KeratinAuthN.setLocalStorageStore("emojify");
   }
 
   componentDidMount() {
     const self = this;
-    KeratinAuthN.restoreSession().then(() => {
+    KeratinAuthN.importSession().then(() => {
       console.log("restoring session");
       self.setState({ event: "ShowForm", loginTitle: "Logout", loggedIn: true });
     }).catch(error => {
-      console.log("error restoring session");
+      console.log("error restoring session: ", error);
     });
   }
 
@@ -96,7 +103,7 @@ class App extends Component {
     switch (this.state.event) {
       case "ShowLogin":
         console.log("show login");
-        eventElement = <Login onResult={this.handleSignUpLoginChange} />;
+        eventElement = <Login oAuthURI={this.state.oAuthURI} onResult={this.handleSignUpLoginChange} />;
         break;
       case "ShowSignUp":
         console.log("show signup");

@@ -76,6 +76,11 @@ class Login extends Component {
       error = <ErrorMessage errorMessage={this.state.errorMessage} />
     }
 
+    let authButton;
+    if (this.props.oAuthEnabled) {
+      authButton = <Button href="{this.props.oAuthURI}" block bsStyle="danger">Login with Github</Button>
+    }
+
     return (
       <Grid>
         <Row>
@@ -106,7 +111,7 @@ class Login extends Component {
                   </Row>
                   <Row>
                     <Col md={6} >
-                      <Button href="{this.props.oAuthURI}" block bsStyle="danger">Login with Github</Button>
+                      {authButton}
                     </Col>
                   </Row>
                 </form>

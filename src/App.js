@@ -14,12 +14,6 @@ import Home from './Home.js';
 import Form from './Form.js';
 import LoginButton from './LoginButton.js';
 
-if (process.env.NODE_ENV === "development") {
-  window.env.config = {
-    API_URL: process.env.REACT_APP_HOST
-  };
-}
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -32,11 +26,13 @@ class App extends Component {
       event: "ShowHome",
       loginTitle: "Login",
       loggedIn: false,
-      oAuthURI: window.env.config.AUTH_URL + "/oauth/github?redirect_uri=" + window.env.config.HOME_URL
+      oAuthURI: window.env.config.AUTH_URL + "/oauth/github?redirect_uri=" + window.env.config.HOME_URL,
+      oAuthEnabled: window.env.config.OAUTH_ENABLED,
     };
 
-    console.log("host:", window.env.config.AUTH_URL);
-    console.log("sessions in cookie");
+    console.log("auth:", window.env.config.AUTH_URL);
+    console.log("api:", window.env.config.API_URL);
+    console.log("home:", window.env.config.HOME_URL);
 
     KeratinAuthN.setHost(window.env.config.AUTH_URL);
     KeratinAuthN.setCookieStore("authn");
@@ -103,7 +99,7 @@ class App extends Component {
     switch (this.state.event) {
       case "ShowLogin":
         console.log("show login");
-        eventElement = <Login oAuthURI={this.state.oAuthURI} onResult={this.handleSignUpLoginChange} />;
+        eventElement = <Login oAuthEnabled={this.state.oAuthEnabled} oAuthURI={this.state.oAuthURI} onResult={this.handleSignUpLoginChange} />;
         break;
       case "ShowSignUp":
         console.log("show signup");

@@ -21,7 +21,7 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx-config/default.conf:/etc/nginx/nginx.conf:ro
+      - ./docker-compose-nginx-default.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "8181:80"
     depends_on:
@@ -38,7 +38,6 @@ services:
       '-service', 'nginx',
       '-http-addr', 'consul:8500',
       '-upstream', 'emojify-website:8000',
-      '-upstream', 'emojify-auth:8001',
       '-upstream', 'emojify-api:8002'
     ]
     environment:
@@ -121,10 +120,11 @@ services:
     command: [
       "-allow-origin=*",
       "-authn-server=http://localhost:3000",
-      "-authn-audience=localhost"
+      "-authn-audience=localhost",
+      "-bind-address=0.0.0.0:9090"
     ]
     environment:
-      - FACEBOX=http://localhost:8080
+      - FACEBOX=http://localhost:8003
       - SERVICE_NAME=emojify-api
       - SERVICE_9090_CHECK_HTTP=/health
       - SERVICE_9090_CHECK_INTERVAL=15s
@@ -143,8 +143,8 @@ services:
       '-listen', 'emojify-api:8443',
       '-service-addr', 'emojify-api:9090',
       '-register',
-      '-upstream', 'emojify-facebox:8080',
-      '-upstream', 'emojify-auth:3000'
+      '-upstream', 'emojify-facebox:8003',
+      '-upstream', 'emojify-auth:3000',
     ]
     environment:
       - SERVICE_IGNORE=true

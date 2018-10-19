@@ -121,7 +121,9 @@ services:
       "-allow-origin=*",
       "-authn-server=http://localhost:3000",
       "-authn-audience=localhost",
-      "-bind-address=0.0.0.0:9090"
+      "-bind-address=0.0.0.0:9090",
+      "-authn-disable=true",
+      "-payment-address=http://localhost:8004"
     ]
     environment:
       - FACEBOX=http://localhost:8003
@@ -145,6 +147,37 @@ services:
       '-register',
       '-upstream', 'emojify-facebox:8003',
       '-upstream', 'emojify-auth:3000',
+      '-upstream', 'emojify-payments:8004',
+    ]
+    environment:
+      - SERVICE_IGNORE=true
+    depends_on:
+      - consul
+
+  emojify-payments:
+    image: "nicholasjackson/emojify-payments:latest"
+    ports:
+      - "9000:8080"
+    environment:
+      - MB_KEY=${MB_KEY}
+      - SERVICE_NAME=emojify-payments
+      - SERVICE_9000_CHECK_HTTP=/health
+      - SERVICE_9000_CHECK_INTERVAL=15s
+      - SERVICE_9000_CHECK_TIMEOUTL=1s
+
+  emojify-payments-proxy:
+    image: consul:latest
+    entrypoint: "consul"
+    network_mode: "service:emojify-payments"
+    command: [
+      'connect',
+      'proxy',
+      '-log-level=DEBUG',
+      '-service', 'emojify-payments',
+      '-http-addr', 'consul:8500',
+      '-listen', 'emojify-payments:8443',
+      '-service-addr', 'emojify-payments:8080',
+      '-register',
     ]
     environment:
       - SERVICE_IGNORE=true

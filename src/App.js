@@ -8,22 +8,35 @@ import * as KeratinAuthN from 'keratin-authn/dist/keratin-authn';
 import Navbar from 'react-bootstrap/lib/Navbar';
 import Nav from 'react-bootstrap/lib/Nav';
 
+import Grid from "react-bootstrap/lib/Grid";
+import Row from "react-bootstrap/lib/Row";
+import Col from "react-bootstrap/lib/Col";
+
 import Login from './Login.js';
 import SignUp from './SignUp.js';
 import Home from './Home.js';
 import Form from './Form.js';
+import Payment from './Payment.js';
 import LoginButton from './LoginButton.js';
+import Image from 'react-bootstrap/lib/Image';
+import ModalFooter from 'react-bootstrap/lib/ModalFooter'
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.handleSignUpLoginChange = this.handleSignUpLoginChange.bind(this);
+    this.handleFormChange = this.handleFormChange.bind(this);
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleHomeClick = this.handleHomeClick.bind(this);
 
+    var event = "ShowHome";
+    if (window.env.config.AUTH_DISABLED) {
+      event = "ShowForm";
+    }
+
     this.state = {
-      event: "ShowHome",
+      event: event,
       loginTitle: "Login",
       loggedIn: false,
       oAuthURI: window.env.config.AUTH_URL + "/oauth/github?redirect_uri=" + window.env.config.HOME_URL,
@@ -50,7 +63,8 @@ class App extends Component {
   }
 
   handleHomeClick() {
-    if (this.state.loggedIn === true) {
+    console.log("home click");
+    if (this.state.loggedIn === true || window.env.config.AUTH_DISABLED === true) {
       this.setState({ event: "ShowForm" });
       return;
     }
@@ -72,6 +86,16 @@ class App extends Component {
         break;
       case "ShowLogin":
         this.setState({ event: "ShowLogin" });
+        break;
+      default:
+    }
+  }
+
+  handleFormChange(event) {
+    console.log("form change");
+    switch (event) {
+      case "PaymentClicked":
+        this.setState({ event: "ShowPayment" });
         break;
       default:
     }
@@ -107,29 +131,44 @@ class App extends Component {
         break;
       case "ShowForm":
         console.log("show form");
-        eventElement = <Form />;
+        eventElement = <Form onResult={this.handleFormChange} />;
+        break;
+      case "ShowPayment":
+        console.log("show payment");
+        eventElement = <Payment />;
         break;
       default:
         console.log("show home");
         eventElement = <Home />;
     }
 
+    var loginButton = <LoginButton text={this.state.loginTitle} onClick={this.handleLoginClick} />;
+    if (window.env.config.AUTH_DISABLED) {
+      loginButton = null;
+    }
+
     return (
-      <div>
+      <div style={{ height: "100%" }}>
         <Navbar inverse collapseOnSelect>
-          <Navbar.Header>
-            <Navbar.Brand onClick={this.homeClick}>
-              Emojify
-            </Navbar.Brand>
-            <Navbar.Toggle />
+          <Navbar.Header >
+            <Image onClick={this.handleHomeClick} src="/images/emojify_small.png" style={{ paddingTop: "10px" }} responsive />
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
-              <LoginButton text={this.state.loginTitle} onClick={this.handleLoginClick} />
+              {loginButton}
             </Nav>
           </Navbar.Collapse>
         </Navbar>
         {eventElement}
+        <Navbar fixedBottom>
+          <Grid>
+            <Row>
+              <Col md={4}><Image src="/images/consul.png" width={250} /></Col>
+              <Col md={4} className="text-center"><Image src="/images/machinebox.png" width={250} /></Col>
+              <Col md={4}><Image className="pull-right" src="/images/emojione.png" width={250} /></Col>
+            </Row>
+          </Grid>
+        </Navbar>
       </div >
     );
   }

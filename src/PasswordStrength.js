@@ -58,8 +58,8 @@ class PasswordStrength extends Component {
 
     return (
       <div>
-        Password strength
-        < ProgressBar striped bsStyle={this.state.style} now={this.state.strength} />
+        <strong>Password strength</strong>
+        <ProgressBar style={{ height: '40px' }} striped bsStyle={this.state.style} now={this.state.strength} />
         <strong>{warning}</strong>
         <div>{suggestions}</div><br />
       </div >

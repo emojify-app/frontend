@@ -85,21 +85,22 @@ class SignUp extends Component {
     return (
       <Grid>
         <Row>
-          <Col xs={12}>
+          <Col md={12}>
             {error}
           </Col>
         </Row>
         <Row>
-          <Col xs={3} xsOffset={4}>
+          <Col md={6} mdOffset={3}>
             <Panel className="loginPanel">
               <Panel.Heading>
-                <Panel.Title>Signup</Panel.Title>
+                <Panel.Title><h3>Signup</h3></Panel.Title>
+                <h4>Sign up for a new account to start emojifying</h4>
               </Panel.Heading>
               <Panel.Body>
                 <form>
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
                   <PasswordStrength password={this.state.password} />
-                  <Button bsStyle="primary" onClick={this.handleSignUp}>Signup</Button>
+                  <Button block bsSize="large" bsStyle="primary" onClick={this.handleSignUp}>Signup</Button>
                 </form>
               </Panel.Body>
             </Panel>

@@ -15,7 +15,7 @@ class LoginButton extends Component {
   render() {
     return (
       <NavItem onClick={this.handleClick}>
-        {this.props.text}
+        <h4>{this.props.text}</h4>
       </NavItem>
     )
   }

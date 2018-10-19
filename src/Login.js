@@ -76,29 +76,45 @@ class Login extends Component {
       error = <ErrorMessage errorMessage={this.state.errorMessage} />
     }
 
+    let authButton;
+    if (this.props.oAuthEnabled) {
+      authButton = <Button href={this.props.oAuthURI} block bsStyle="danger">Login with Github</Button>
+    }
+
     return (
       <Grid>
         <Row>
-          <Col xs={12}>
+          <Col md={12}>
             {error}
           </Col>
         </Row>
         <Row>
-          <Col xs={3} xsOffset={4}>
+          <Col md={6} mdOffset={3}>
             <Panel className="loginPanel">
               <Panel.Heading>
-                <Panel.Title>Login</Panel.Title>
-                Login to Emojify using your email address and password
+                <Panel.Title><h3>Login</h3></Panel.Title>
+                <h4>Login to Emojify using your email address and password</h4>
               </Panel.Heading>
               <Panel.Body>
                 <form>
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
                   <Row>
-                    <Col xs={6}>
-                      <Button bsStyle="primary" onClick={this.handleLogin}>Login</Button>
+                    <Col md={12}>
+                      <Button block bsSize="large" bsStyle="primary" onClick={this.handleLogin}>Login</Button>
                     </Col>
-                    <Col xs={6} >
-                      <Button className="pull-right" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
+                  </Row>
+                  <Row><Col md={12}>&nbsp;</Col></Row>
+                  <Row>
+                    <Col md={12}>
+                      <Button block bsSize="large" className="pull-right" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={12}>&nbsp;</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6} >
+                      {authButton}
                     </Col>
                   </Row>
                 </form>

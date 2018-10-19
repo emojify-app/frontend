@@ -9,6 +9,4 @@ COPY ./build /app/build
 
 WORKDIR /app
 
-EXPOSE 5000
-
-ENTRYPOINT  ["serve","-s","build"]
+ENTRYPOINT  ["serve", "-s","build"]

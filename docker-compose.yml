@@ -18,20 +18,32 @@ services:
     depends_on:
       - consul
 
-  connect-router:
-    image: nicholasjackson/consul-connect-router:latest
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./docker-compose-nginx-default.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "8181:8181"
-    command: [
-      '--upstream=service=emojify-website#path=/',
-      '--upstream=service=emojify-api#path=/api',
-      '--upstream=service=emojify-auth#path=/auth',
-      '--consul_addr=http://consul:8500'
-    ]
+      - "8181:80"
     depends_on:
       - consul
+
+  nginx-proxy:
+    image: consul:latest
+    network_mode: "service:nginx"
+    entrypoint: "consul"
+    command: [
+      'connect',
+      'proxy',
+      '-log-level=DEBUG',
+      '-service', 'nginx',
+      '-http-addr', 'consul:8500',
+      '-upstream', 'emojify-website:8000',
+      '-upstream', 'emojify-api:8002'
+    ]
     environment:
-      - SERVICE_NAME=connect-router
+      - SERVICE_IGNORE=true
+    depends_on:
+      - consul
 
   emojify-website:
     image: nicholasjackson/emojify-website:latest
@@ -72,6 +84,7 @@ services:
       - DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared
       - AUTHN_URL=http://localhost:3000
       - APP_DOMAINS=localhost
+      - PROXIED=true
       - SECRET_KEY_BASE=changeme
       - SERVICE_NAME=emojify-auth
       - SERVICE_3000_CHECK_HTTP=/health
@@ -107,10 +120,13 @@ services:
     command: [
       "-allow-origin=*",
       "-authn-server=http://localhost:3000",
-      "-authn-audience=localhost"
+      "-authn-audience=localhost",
+      "-bind-address=0.0.0.0:9090",
+      "-authn-disable=true",
+      "-payment-address=http://localhost:8004"
     ]
     environment:
-      - FACEBOX=http://localhost:8080
+      - FACEBOX=http://localhost:8003
       - SERVICE_NAME=emojify-api
       - SERVICE_9090_CHECK_HTTP=/health
       - SERVICE_9090_CHECK_INTERVAL=15s
@@ -129,8 +145,39 @@ services:
       '-listen', 'emojify-api:8443',
       '-service-addr', 'emojify-api:9090',
       '-register',
-      '-upstream', 'emojify-facebox:8080',
-      '-upstream', 'emojify-auth:3000'
+      '-upstream', 'emojify-facebox:8003',
+      '-upstream', 'emojify-auth:3000',
+      '-upstream', 'emojify-payments:8004',
+    ]
+    environment:
+      - SERVICE_IGNORE=true
+    depends_on:
+      - consul
+
+  emojify-payments:
+    image: "nicholasjackson/emojify-payments:latest"
+    ports:
+      - "9000:8080"
+    environment:
+      - MB_KEY=${MB_KEY}
+      - SERVICE_NAME=emojify-payments
+      - SERVICE_9000_CHECK_HTTP=/health
+      - SERVICE_9000_CHECK_INTERVAL=15s
+      - SERVICE_9000_CHECK_TIMEOUTL=1s
+
+  emojify-payments-proxy:
+    image: consul:latest
+    entrypoint: "consul"
+    network_mode: "service:emojify-payments"
+    command: [
+      'connect',
+      'proxy',
+      '-log-level=DEBUG',
+      '-service', 'emojify-payments',
+      '-http-addr', 'consul:8500',
+      '-listen', 'emojify-payments:8443',
+      '-service-addr', 'emojify-payments:8080',
+      '-register',
     ]
     environment:
       - SERVICE_IGNORE=true

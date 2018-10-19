@@ -26,6 +26,7 @@ class LoginForm extends Component {
           label="Email"
           placeholder="Enter email address"
           onChange={this.handleUsernameChange}
+          bsSize="large"
         />
         <FieldGroup
           id="formControlsText"
@@ -33,6 +34,7 @@ class LoginForm extends Component {
           label="Password"
           placeholder="Enter password"
           onChange={this.handlePasswordChange}
+          bsSize="large"
         />
       </div>
     );

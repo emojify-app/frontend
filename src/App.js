@@ -91,11 +91,10 @@ class App extends Component {
     }
   }
 
-  handleFormChange(event) {
-    console.log("form change");
+  handleFormChange(event, props) {
     switch (event) {
       case "PaymentClicked":
-        this.setState({ event: "ShowPayment" });
+        this.setState({ event: "ShowPayment", price: props.price });
         break;
       default:
     }
@@ -135,7 +134,7 @@ class App extends Component {
         break;
       case "ShowPayment":
         console.log("show payment");
-        eventElement = <Payment />;
+        eventElement = <Payment price={this.state.price} />;
         break;
       default:
         console.log("show home");
@@ -162,7 +161,7 @@ class App extends Component {
         <div style={{ flex: "1 0 auto" }}>
           {eventElement}
         </div>
-        <MediaQuery minHeight={1000}>
+        <MediaQuery minHeight={1000} minWidth={1000}>
           <Navbar fixedBottom>
             <Grid>
               <Row>

@@ -7,7 +7,7 @@ class ErrorMessage extends Component {
   render() {
     return (
       <Alert bsStyle="danger">
-        <h3><strong>Error:</strong> {this.props.errorMessage}</h3>
+        <h3> {this.props.errorMessage}</h3>
       </Alert>
     );
   }

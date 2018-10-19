@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 
 import axios from 'axios';
@@ -66,7 +67,13 @@ class Payment extends Component {
     let self = this;
     axios.post(window.env.config.PAYMENT_URL, payload, { headers: headers }).then(function (response) {
       console.log(response);
-      let responseMessage = "Payment failed: " + response.data.message + ", reference id: " + response.data.id;
+      var responseMessage =
+        <p>
+          <strong>Error: Payment failed</strong>
+          <br></br>
+          {response.data.message}, reference id: {response.data.id}
+        </p >;
+
       self.setState({ errorMessage: responseMessage, showError: true });
     }).catch(function (error) {
       console.log(error);
@@ -79,31 +86,34 @@ class Payment extends Component {
   }
 
   async autoEnter() {
+    var n;
+    var val;
+
     var ccnumber = "5355 1234 4231 1234";
-    for (var n = 0; n < ccnumber.length + 1; n++) {
-      var val = ccnumber.substr(0, n);
+    for (n = 0; n < ccnumber.length + 1; n++) {
+      val = ccnumber.substr(0, n);
       this.setState({ number_value: val, number: val });
       await this.sleep(100);
     }
 
     var ccname = "Mr Paul Banks";
-    for (var n = 0; n < ccname.length + 1; n++) {
-      var val = ccname.substr(0, n);
+    for (n = 0; n < ccname.length + 1; n++) {
+      val = ccname.substr(0, n);
       this.setState({ name_value: val, name: val });
       await this.sleep(100);
     }
 
     var ccexpiry = "10/20";
-    for (var n = 0; n < ccexpiry.length + 1; n++) {
-      var val = ccexpiry.substr(0, n);
+    for (n = 0; n < ccexpiry.length + 1; n++) {
+      val = ccexpiry.substr(0, n);
       this.setState({ expiry_value: val, expiry: val });
       await this.sleep(100);
     }
 
     this.setState({ focused: "cvc" });
     var cccvc = "123";
-    for (var n = 0; n < cccvc.length + 1; n++) {
-      var val = cccvc.substr(0, n);
+    for (n = 0; n < cccvc.length + 1; n++) {
+      val = cccvc.substr(0, n);
       this.setState({ cvc_value: val, cvc: val });
       await this.sleep(100);
     }
@@ -131,7 +141,7 @@ class Payment extends Component {
             <Panel className="loginPanel">
               <Panel.Heading>
                 <Panel.Title onClick={this.autoEnter}><h3>Payment</h3></Panel.Title>
-                <h4>Enter your Payment details</h4>
+                <h4>You are about to pay Emojify Ltd the sum of <strong>{this.props.price}</strong>, please enter your payment details.</h4>
               </Panel.Heading>
               <Panel.Body>
                 <form>

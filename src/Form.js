@@ -1,4 +1,6 @@
+/*eslint no-extend-native: ["error", { "exceptions": ["String"] }]*/
 /*jshint esversion: 6 */
+
 import React, { Component } from 'react';
 
 import axios from 'axios';
@@ -8,9 +10,16 @@ import Button from 'react-bootstrap/lib/Button';
 import Grid from 'react-bootstrap/lib/Grid';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
-import Image from './Image.js';
+import Image from 'react-bootstrap/lib/Image';
 import FieldGroup from './FieldGroup';
 import Fade from 'react-bootstrap/lib/Fade';
+
+String.prototype.rpad = function (padString, length) {
+  var str = this;
+  while (str.length < length)
+    str += padString;
+  return str;
+}
 
 class Form extends Component {
   constructor(props) {
@@ -48,31 +57,23 @@ class Form extends Component {
   }
 
   handlePayment(e) {
-    this.props.onResult("PaymentClicked");
+    this.props.onResult("PaymentClicked", { price: e.target.value });
   }
 
   render() {
-    let randomDollars = Math.round(Math.random() * 70 + 10);
-    let randomCents = Math.round(Math.random() * 100);
+    var randomDollars = (Math.round(Math.random() * 70 + 10) + "").rpad("0", 2);
+    var randomCents = (Math.round(Math.random() * 100) + "").rpad("0", 2);
+
+    let price = "$" + randomDollars + "." + randomCents;
 
     var buyNow = null;
     if (this.state.showPayment) {
       buyNow =
-        <div>
-          <Row>
-            <Col md={12} className="text-center"><h3>Buy a 16x10 high gloss photo of this image for only <b>${randomDollars}.{randomCents}</b></h3></Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-              &nbsp;
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6} mdOffset={3}>
-              <Button bsStyle="danger" bsSize="large" block onClick={this.handlePayment}>Buy Now!</Button>
-            </Col>
-          </Row>
-        </div>;
+        <Row>
+          <Col md={12} className="text-center"><h3>Buy a 16x10 high gloss photo of this image for only <b>{price}</b></h3>
+            <Button bsStyle="danger" bsSize="large" block value={price} onClick={this.handlePayment}>Buy Now!</Button>
+          </Col>
+        </Row>;
     }
 
     var logo = null;
@@ -80,7 +81,7 @@ class Form extends Component {
       logo =
         <Row>
           <Col xs={12}>
-            <Image src="/images/emojify.png" width={900} height={300} mode='fit' />
+            <Image src="/images/emojify.png" responsive style={{ margin: "0 auto" }} />
           </Col>
         </Row>;
     }
@@ -88,25 +89,19 @@ class Form extends Component {
     var input = null;
     if (!this.state.showPayment) {
       input =
-        <div>
-          <Row>
-            <Col xs={12}>
-              <FieldGroup
-                id="urlInput"
-                type="text"
-                label="Image URL"
-                placeholder="http://image.com/image.png"
-                onChange={this.handleChange}
-                bsSize="large"
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-              <Button bsStyle="success" bsSize="large" onClick={this.handleSubmit}>Submit</Button>
-            </Col>
-          </Row>
-        </div>;
+        <Row>
+          <Col xs={12}>
+            <FieldGroup
+              id="urlInput"
+              type="text"
+              label="Image URL"
+              placeholder="http://image.com/image.png"
+              onChange={this.handleChange}
+              bsSize="large"
+            />
+            <Button bsStyle="success" bsSize="large" onClick={this.handleSubmit}>Submit</Button>
+          </Col>
+        </Row >;
     }
 
     return (
@@ -115,9 +110,7 @@ class Form extends Component {
           {logo}
           <Row>
             <Col xs={12}>
-              <Fade in={this.state.loading}>
-                <Image src={this.state.imageURL} width={1200} height={600} mode='fit' />
-              </Fade>
+              <Image src={this.state.imageURL} responsive style={{ margin: "0 auto" }} />
             </Col>
           </Row>
           {input}

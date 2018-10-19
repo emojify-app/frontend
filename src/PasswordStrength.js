@@ -2,6 +2,10 @@
 import React, { Component } from 'react';
 
 import ProgressBar from 'react-bootstrap/lib/ProgressBar';
+import Grid from 'react-bootstrap/lib/Grid';
+import Row from 'react-bootstrap/lib/Row';
+import Col from 'react-bootstrap/lib/Col';
+
 import zxcvbn from 'zxcvbn/lib/main';
 
 class PasswordStrength extends Component {
@@ -9,7 +13,7 @@ class PasswordStrength extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { strength: 0, style: "danger", warning: "", suggestions: "" };
+    this.state = { strength: 0, style: "danger", warning: "", suggestions: [] };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,33 +42,33 @@ class PasswordStrength extends Component {
       default:
     }
 
-    var suggestions = "";
-    if (result.feedback.suggestions.length > 0) {
-      suggestions = result.feedback.suggestions.join('\n');
+    var suggestions = [];
+    if (result.feedback.suggestions !== undefined) {
+      suggestions = result.feedback.suggestions;
     }
-    console.log(suggestions);
 
     this.setState({
       strength: strength,
       style: style,
-      warning: result.feedback.warning,
-      suggestions: suggestions
+      suggestions: suggestions,
+      warning: result.feedback.warning
     })
   }
 
   render() {
-    var warning = this.state.warning;
-    var suggestions = this.state.suggestions;
+    var warning = <h4>{this.state.warning}</h4>
 
     return (
       <div>
         <strong>Password strength</strong>
         <ProgressBar style={{ height: '40px' }} striped bsStyle={this.state.style} now={this.state.strength} />
         <strong>{warning}</strong>
-        <div>{suggestions}</div><br />
-      </div >
-    );
+        <Grid>
+          {this.state.suggestions.map((suggestion, index) => <Row key={index}><Col>{suggestion}</Col></Row>)}
+        </Grid>
+      </div>
+    )
   }
-}
+};
 
 export default PasswordStrength;

@@ -100,6 +100,7 @@ class SignUp extends Component {
                 <form>
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
                   <PasswordStrength password={this.state.password} />
+                  <br />
                   <Button block bsSize="large" bsStyle="primary" onClick={this.handleSignUp}>Signup</Button>
                 </form>
               </Panel.Body>

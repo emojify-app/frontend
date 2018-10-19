@@ -78,7 +78,7 @@ class Login extends Component {
 
     let authButton;
     if (this.props.oAuthEnabled) {
-      authButton = <Button href={this.props.oAuthURI} block bsStyle="danger">Login with Github</Button>
+      authButton = <Button href={this.props.oAuthURI} block bsSize="large" bsStyle="primary">Login with Github</Button>
     }
 
     return (
@@ -100,20 +100,20 @@ class Login extends Component {
                   <LoginForm onUsernameChange={this.handleUsernameChange} onPasswordChange={this.handlePasswordChange} />
                   <Row>
                     <Col md={12}>
-                      <Button block bsSize="large" bsStyle="primary" onClick={this.handleLogin}>Login</Button>
+                      <Button block bsSize="large" bsStyle="success" onClick={this.handleLogin}>Login</Button>
                     </Col>
                   </Row>
                   <Row><Col md={12}>&nbsp;</Col></Row>
                   <Row>
                     <Col md={12}>
-                      <Button block bsSize="large" className="pull-right" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
+                      <Button block bsSize="large" bsStyle="danger" onClick={this.handleSignUpClick}>SignUp</Button>
                     </Col>
                   </Row>
                   <Row>
                     <Col md={12}>&nbsp;</Col>
                   </Row>
                   <Row>
-                    <Col md={6} >
+                    <Col md={12} >
                       {authButton}
                     </Col>
                   </Row>

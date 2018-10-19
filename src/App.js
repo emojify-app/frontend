@@ -19,7 +19,7 @@ import Form from './Form.js';
 import Payment from './Payment.js';
 import LoginButton from './LoginButton.js';
 import Image from 'react-bootstrap/lib/Image';
-import ModalFooter from 'react-bootstrap/lib/ModalFooter'
+import MediaQuery from 'react-responsive';
 
 class App extends Component {
   constructor(props) {
@@ -148,7 +148,7 @@ class App extends Component {
     }
 
     return (
-      <div style={{ height: "100%" }}>
+      <div>
         <Navbar inverse collapseOnSelect>
           <Navbar.Header >
             <Image onClick={this.handleHomeClick} src="/images/emojify_small.png" style={{ paddingTop: "10px" }} responsive />
@@ -159,16 +159,20 @@ class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        {eventElement}
-        <Navbar fixedBottom>
-          <Grid>
-            <Row>
-              <Col md={4}><Image src="/images/consul.png" width={250} /></Col>
-              <Col md={4} className="text-center"><Image src="/images/machinebox.png" width={250} /></Col>
-              <Col md={4}><Image className="pull-right" src="/images/emojione.png" width={250} /></Col>
-            </Row>
-          </Grid>
-        </Navbar>
+        <div style={{ flex: "1 0 auto" }}>
+          {eventElement}
+        </div>
+        <MediaQuery minHeight={1000}>
+          <Navbar fixedBottom>
+            <Grid>
+              <Row>
+                <Col md={4}><Image src="/images/consul.png" width={250} /></Col>
+                <Col md={4} className="text-center"><Image src="/images/machinebox.png" width={250} /></Col>
+                <Col md={4}><Image className="pull-right" src="/images/emojione.png" width={250} /></Col>
+              </Row>
+            </Grid>
+          </Navbar>
+        </MediaQuery>
       </div >
     );
   }

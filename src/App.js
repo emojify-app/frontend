@@ -146,11 +146,16 @@ class App extends Component {
       loginButton = null;
     }
 
+    var smallLogoSrc = "/images/emojify_small.png"
+    if (window.env.config.PAYMENT_ENABLED) {
+      smallLogoSrc = "/images/emojify_ent_small.png"
+    }
+
     return (
       <div>
         <Navbar inverse collapseOnSelect>
           <Navbar.Header >
-            <Image onClick={this.handleHomeClick} src="/images/emojify_small.png" style={{ paddingTop: "10px" }} responsive />
+            <Image onClick={this.handleHomeClick} src={smallLogoSrc} style={{ paddingTop: "10px" }} responsive />
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>

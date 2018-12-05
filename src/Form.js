@@ -12,7 +12,6 @@ import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import Image from 'react-bootstrap/lib/Image';
 import FieldGroup from './FieldGroup';
-import Fade from 'react-bootstrap/lib/Fade';
 
 String.prototype.rpad = function (padString, length) {
   var str = this;

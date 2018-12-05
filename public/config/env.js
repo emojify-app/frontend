@@ -7,5 +7,5 @@ window.env.config = {
   HOME_URL: 'http://localhost:3006',
   PAYMENT_ENABLED: true,
   OAUTH_ENABLED: false,
-  AUTH_DISABLED: false
+  AUTH_ENABLED: false
 };

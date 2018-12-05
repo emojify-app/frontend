@@ -31,7 +31,7 @@ class App extends Component {
     this.handleHomeClick = this.handleHomeClick.bind(this);
 
     var event = "ShowHome";
-    if (window.env.config.AUTH_DISABLED) {
+    if (!window.env.config.AUTH_ENABLED) {
       event = "ShowForm";
     }
 
@@ -142,7 +142,7 @@ class App extends Component {
     }
 
     var loginButton = <LoginButton text={this.state.loginTitle} onClick={this.handleLoginClick} />;
-    if (window.env.config.AUTH_DISABLED) {
+    if (!window.env.config.AUTH_ENABLED) {
       loginButton = null;
     }
 

@@ -43,7 +43,7 @@ class Form extends Component {
 
     axios.post(window.env.config.API_URL, this.state.urlInput, { headers: headers }).then(function (response) {
       console.log(response);
-      self.setState({ imageURL: window.env.config.API_URL + '/cache?file=' + response.data, showPayment: showPayment });
+      self.setState({ imageURL: window.env.config.API_URL + 'cache/' + response.data, showPayment: showPayment });
     }).catch(function (error) {
       // handle error
       console.log(error);

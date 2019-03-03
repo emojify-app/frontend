@@ -1,4 +1,4 @@
-tag="v0.6.1"
+tag="v0.6.2"
 
 build_website:
 	yarn run build

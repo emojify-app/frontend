@@ -26,6 +26,7 @@ class Form extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handlePayment = this.handlePayment.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
 
     this.state = { urlInput: "", showLogo: true, showPayment: false };
   }
@@ -57,6 +58,12 @@ class Form extends Component {
 
   handlePayment(e) {
     this.props.onResult("PaymentClicked", { price: e.target.value });
+  }
+
+  handleKeyPress(e) {
+    if(e.key === 'Enter'){
+      this.handleSubmit(e)
+    } 
   }
 
   render() {
@@ -96,6 +103,7 @@ class Form extends Component {
               label="Image URL"
               placeholder="http://image.com/image.png"
               onChange={this.handleChange}
+              onKeyPress={this.handleKeyPress}
               bsSize="large"
             />
             <Button bsStyle="success" bsSize="large" onClick={this.handleSubmit}>Submit</Button>

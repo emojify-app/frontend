@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "interweave": "^11.1.0",
     "keratin-authn": "^1.1.0",
     "react": "^15.5.4",
     "react-bootstrap": "^0.32.4",

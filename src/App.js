@@ -20,6 +20,7 @@ import Payment from './Payment.js';
 import LoginButton from './LoginButton.js';
 import Image from 'react-bootstrap/lib/Image';
 import MediaQuery from 'react-responsive';
+import Markup from 'interweave';
 
 class App extends Component {
   constructor(props) {
@@ -151,15 +152,20 @@ class App extends Component {
       smallLogoSrc = "/images/emojify_ent_small.png"
     }
 
+    var cluster = ""
+    if(!window.env.config.CLUSTER !== "") {
+      cluster = window.env.config.CLUSTER;
+    }
+
     return (
       <div>
         <Navbar inverse collapseOnSelect>
           <Navbar.Header >
-            <Image onClick={this.handleHomeClick} src={smallLogoSrc} style={{ paddingTop: "10px" }} responsive />
+            <Image onClick={this.handleHomeClick} src={smallLogoSrc} style={{ paddingTop: "10px" }} responsive /> 
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
-              {loginButton}
+              <Markup content={cluster} />
             </Nav>
           </Navbar.Collapse>
         </Navbar>

@@ -20,6 +20,10 @@ String.prototype.rpad = function (padString, length) {
   return str;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -42,14 +46,46 @@ class Form extends Component {
 
     var showPayment = window.env.config.PAYMENT_ENABLED;
 
-    axios.post(window.env.config.API_URL, this.state.urlInput, { headers: headers }).then(function (response) {
+    axios.post(window.env.config.API_URL + "emojify/", this.state.urlInput, { headers: headers }).then(function (response) {
       console.log(response);
-      self.setState({ imageURL: window.env.config.API_URL + 'cache/' + response.data, showPayment: showPayment });
+      // we should have an id an status check to see if complete
+      if (response.data.status === "FINISHED") {
+        self.setState({ imageURL: window.env.config.API_URL + 'cache/' + response.data.id, showPayment: showPayment });
+      } else {
+        // start polling
+        self.pollImage(response.data.id, 0);
+      }
     }).catch(function (error) {
       // handle error
       console.log(error);
       self.setState({ imageURL: "/images/sorry.png" });
     });
+  }
+
+  pollImage(id, c) {
+    var self = this;
+    // poll until complete
+    sleep(5000).then(() => {
+      console.log("polling queue ", c);
+      axios.get(window.env.config.API_URL + "emojify/" + id).then(function (response) {
+        console.log(response);
+        if (response.data.status === "FINISHED") {
+          self.setState({ imageURL: window.env.config.API_URL + 'cache/' + response.data.id });
+        } else {
+          if (c + 1 < 100) {
+            // try again
+            self.pollImage(id, c + 1);
+          } else {
+            // retry exceeded
+            self.setState({ imageURL: "/images/sorry.png" });
+          }
+        }
+      }).catch(function (error) {
+        self.setState({ imageURL: "/images/sorry.png" });
+      });
+
+    });
+
   }
 
   handleChange(e) {
@@ -61,9 +97,9 @@ class Form extends Component {
   }
 
   handleKeyPress(e) {
-    if(e.key === 'Enter'){
+    if (e.key === 'Enter') {
       this.handleSubmit(e)
-    } 
+    }
   }
 
   render() {
